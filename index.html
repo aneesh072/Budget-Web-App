@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget App</title>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="container">
+            <p id="error_msg"></p>
+            <div class="title">
+                <h1 class="title"> Home Budget <a href="#"></a> 
+                </h1>
+            </div>
+            <h3>New Entry</h3>
+            <form id="form">
+                <div class="form-control">
+                    <input type="text" id="text" onfocus="this.value=''" placeholder="Enter Text...">
+                </div>
+                <div class="form-control">
+                    <input type="number" id="amount" onfocus="this.value=''" placeholder="Enter Value...">
+                </div>
+                <button class="button">Add Transcation</button>
+            </form>
+            <br>
+            <div class="income-expense">
+                <div class="bg-dark">
+                    <h4>Inflow</h4>
+                    <div class="income" id="income">$0.00</div>
+                </div>
+                <div class="bg-dark">
+                    <h4>Outflow</h4>
+                    <div class="expense" id="expense">$0.00</div>
+                </div>
+                <div class="bg-dark">
+                    <h4>Balance</h4>
+                    <div id="balance">$0.00</div>
+                </div>
+            </div>
+            <h3>History</h3>
+
+            <!-- Dynamically displaying the list of trainscations-->
+            <utl class="list" id="list"></utl>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
