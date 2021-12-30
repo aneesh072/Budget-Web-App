@@ -6,76 +6,113 @@ const form = document.getElementById("form");
 const text = document.getElementById("text");
 const amount = document.getElementById("amount");
 
-//Get transcation from local storage
-f
+// Get transactions from local storage
+const localStorageTransactions = JSON.parse(
+  localStorage.getItem("transactions")
+);
 
-//Add transcation function
+let transactions =
+  localStorage.getItem("transactions") !== null ? localStorageTransactions : [];
 
-function addTranscation(e){
-    e.preventDefault();
-    //condition to check if the fields are emptyt or not
+// Add transaction
+function addTransaction(e) {
+  e.preventDefault();
 
-    if(text.ariaValueMax.trim() === "" || amount.ariaValueMax.trim() === ""){
-        document.getElementById("error_msg").innerHTML = 
-        <span> Error. Enter text and amount first.</span>;
-        settimeout (
-            () => (document.getElementById("eooro_msg").innerHTML = ""),
-            5000
-        );
-    } 
-    else{
-        const transcation = {
-        
-            id: generateID(),
-            text: text.value,
-            amount: +amount.value,
-        };
+  if (text.value.trim() === "" || amount.value.trim() === "") {
+    document.getElementById("error_msg").innerHTML =
+      "<span >Error: Please enter description and amount!</span>";
+    setTimeout(
+      () => (document.getElementById("error_msg").innerHTML = ""),
+      5000
+    );
+  } else {
+    const transaction = {
+      id: generateID(),
+      text: text.value,
+      amount: +amount.value,
+    };
 
-        transcation.push(transcation);
+    transactions.push(transaction);
 
-        // I want to add transcation to document object 
-        //modle DOM - for local storage
+    addTransactionDOM(transaction);
 
+    updateValues();
 
+    updateLocalStorage();
 
-        //Invoke add transcation DOM
-    }
-
-    // Generate random ID - for delete button
-
-    function generateID(){
-        return Math.floor(Math.random() * 10000000);
-    }
-
-    //Transcation history
-    function addTranscationDOM(transcation){
-    
-        // Sign ( + or -)
-
-        const sign = transcation.amount < 0 ? "_" : "+";
-
-        const item = document.createElement("li");
-
-        //Add list element based on sign
-        item.classList.add(transcation.amount < 0 ? "minus" : "plus");
-
-        // Adding (rendering) the list element with hthe delete button on the page 
-        //using innerHEML property
-
-        item.innerHTML = '${transcation.text} ${sign} ${Math.abs(transcation.amount)'}
-
-        <button class="delete-btn"
-        onclick="removeTranscation(${transcation.id})"
-        X>
-        </button>;
-
-        //Remove transcation by ID
-        
-    }
-
-
-
-
+    text.value = "";
+    amount.value = "";
+  }
 }
 
-form.addEventListener("submit", addTranscation)
+// Generate random ID
+function generateID() {
+  return Math.floor(Math.random() * 100000000);
+}
+
+// Transactions history
+function addTransactionDOM(transaction) {
+  // Get sign
+  const sign = transaction.amount < 0 ? "-" : "+";
+
+  const item = document.createElement("li");
+
+  // Add class based on value
+  item.classList.add(transaction.amount < 0 ? "minus" : "plus");
+
+  item.innerHTML = `
+    ${transaction.text} ${sign}${Math.abs(
+    transaction.amount
+  )} <button class="delete-btn" onclick="removeTransaction(${
+    transaction.id
+  })">X</button>
+  `;
+
+  list.appendChild(item);
+}
+
+// Update the balance, inflow and outflow
+function updateValues() {
+  const amounts = transactions.map((transaction) => transaction.amount);
+
+  const total = amounts.reduce((bal, value) => (bal += value), 0).toFixed(2);
+
+  const income = amounts
+    .filter((value) => value > 0)
+    .reduce((bal, value) => (bal += value), 0)
+    .toFixed(2);
+
+  const expense =
+    amounts
+      .filter((value) => value < 0)
+      .reduce((bal, value) => (bal += value), 0) * -(1).toFixed(2);
+
+  balance.innerText = `$${total}`;
+  inflow.innerText = `$${income}`;
+  outflow.innerText = `$${expense}`;
+}
+
+// Remove transaction by ID
+function removeTransaction(id) {
+  transactions = transactions.filter((transaction) => transaction.id !== id);
+
+  updateLocalStorage();
+
+  start();
+}
+
+// Update local storage transactions
+function updateLocalStorage() {
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+// Start app
+function start() {
+  list.innerHTML = "";
+  transactions.forEach(addTransactionDOM);
+  updateValues();
+}
+
+start();
+
+form.addEventListener("submit", addTransaction);
